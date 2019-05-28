@@ -1,0 +1,9 @@
+server:
+  port: 8080
+
+mysql:
+  user: "dahengzhang"
+  pwd: "000000"
+  host: "db"
+  port: "3306"
+  database: "webIM"
