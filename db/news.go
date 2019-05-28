@@ -6,7 +6,7 @@ import (
 
 // GetNews 新闻列表
 func GetNews() ([]dto.News, error) {
-	stmtOut, err := dbConn.Prepare("SELECT nid, title, LEFT(content, 50), create_time, update_time FROM news")
+	stmtOut, err := dbConn.Prepare("SELECT nid, title, preview, create_time, update_time FROM news")
 	if err != nil {
 		return []dto.News{}, err
 	}
@@ -17,15 +17,15 @@ func GetNews() ([]dto.News, error) {
 	rows, err := stmtOut.Query()
 	for rows.Next() {
 		var nid int
-		var title, content, creatTime, updateTime string
-		err := rows.Scan(&nid, &title, &content, &creatTime, &updateTime)
+		var title, preview, creatTime, updateTime string
+		err := rows.Scan(&nid, &title, &preview, &creatTime, &updateTime)
 		if err != nil {
 			continue
 		}
 		result = append(result, dto.News{
 			Nid:        nid,
 			Title:      title,
-			Content:    content,
+			Preview:    preview,
 			CreateTime: creatTime,
 			UpdateTime: updateTime,
 		})
@@ -35,14 +35,14 @@ func GetNews() ([]dto.News, error) {
 }
 
 // CreateNews 创建新闻
-func CreateNews(title, content string) error {
-	stmtIns, err := dbConn.Prepare("INSERT INTO news (title, content) VALUES (?,?)")
+func CreateNews(title, preview, content string) error {
+	stmtIns, err := dbConn.Prepare("INSERT INTO news (title, preview, content) VALUES (?,?,?)")
 	if err != nil {
 		return err
 	}
 	defer stmtIns.Close()
 
-	_, err = stmtIns.Exec(title, content)
+	_, err = stmtIns.Exec(title, preview, content)
 	if err != nil {
 		return err
 	}
@@ -75,14 +75,14 @@ func SearchNews(id int) (dto.News, error) {
 }
 
 // EditNews 编辑新闻
-func EditNews(id int, title, content string) error {
-	stmtIns, err := dbConn.Prepare("UPDATE news SET title=?, content=? WHERE nid=?")
+func EditNews(id int, title, preview, content string) error {
+	stmtIns, err := dbConn.Prepare("UPDATE news SET title=?, preview=?, content=? WHERE nid=?")
 	if err != nil {
 		return err
 	}
 	defer stmtIns.Close()
 
-	_, err = stmtIns.Exec(title, content, id)
+	_, err = stmtIns.Exec(title, preview, content, id)
 	if err != nil {
 		return err
 	}

@@ -3,8 +3,8 @@ package router
 import (
 	"dahengzhang/news/db"
 	"dahengzhang/news/dto"
+	"dahengzhang/news/util"
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -32,7 +32,6 @@ func getNewsList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		rb.ReturnToFE(w)
 		return
 	}
-	fmt.Print(res)
 	rb := dto.ResBody{
 		Code: 0,
 		Data: res,
@@ -44,7 +43,8 @@ func createNews(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	decoder := json.NewDecoder(r.Body)
 	var body dto.News
 	decoder.Decode(&body)
-	err := db.CreateNews(body.Title, body.Content)
+	preview := util.CutHTML(body.Content, 100)
+	err := db.CreateNews(body.Title, preview, body.Content)
 	if err != nil {
 		rb := dto.ResBody{
 			Code: 1,
@@ -75,7 +75,8 @@ func editNews(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	decoder := json.NewDecoder(r.Body)
 	var body dto.News
 	decoder.Decode(&body)
-	err = db.EditNews(id, body.Title, body.Content)
+	preview := util.CutHTML(body.Content, 100)
+	err = db.EditNews(id, body.Title, preview, body.Content)
 	if err != nil {
 		rb := dto.ResBody{
 			Code: 1,

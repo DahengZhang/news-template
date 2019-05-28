@@ -22,7 +22,7 @@ func init() {
 	}
 
 	// 创建链接池 docker run -d -p 8080:8080 --link news-mysql:db dahengzhang/news
-	dbConn, err = sql.Open("mysql", "dahengzhang:000000@tcp(db:3306)/webIM?charset=utf8&multiStatements=true")
+	dbConn, err = sql.Open("mysql", "dahengzhang:000000@tcp(127.0.0.1:3306)/webIM?charset=utf8&multiStatements=true")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
